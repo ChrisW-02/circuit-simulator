@@ -5,7 +5,8 @@
 void getCfactor(int M[N][N], int t[N][N], int p, int q, int n) {
    int i = 0, j = 0;
    for (int r= 0; r< n; r++) {
-      for (int c = 0; c< n; c++) //Copy only those elements which are not in given row r and column c: {
+      for (int c = 0; c< n; c++) //Copy only those elements which are not in given row r and column c: 
+      {
          if (r != p && c != q) { t[i][j++] = M[r][c]; //If row is filled increase r index and reset c index
             if (j == n - 1) {
                j = 0; i++;
