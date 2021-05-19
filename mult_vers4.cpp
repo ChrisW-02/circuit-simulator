@@ -9,22 +9,13 @@ struct Matrix{
     element** mat;
     element** inv;
 
-    void delete_mat(){
+    void delete(element** a){
         for(int i = 0; i < dim; ++i)
         {
-            delete []mat[i];
+            delete []a[i];
         }
-        delete []mat;
+        delete []a;
     }
-
-    void delete_inv(){
-        for(int i = 0; i < dim; ++i)
-        {
-            delete []inv[i];
-        }
-        delete []inv;
-    }
-    //efficiency hack
 
     void set_dim(){
         mat = new element* [dim];
@@ -37,7 +28,7 @@ struct Matrix{
     } 
 
 
-    void input(){
+    void inputmat(){
         set_dim();
         for (int i = 0; i < dim; i++){
         for (int j = 0; j < dim; j++){
@@ -46,24 +37,14 @@ struct Matrix{
     }
     }
 
-    void printmat(){
+    void print(element** a){
         for (int i = 0; i < dim; i++){
         for (int j = 0; j < dim; j++){
-            std::cout << mat[i][j]<< "\t";
+            std::cout << a[i][j]<< "\t";
         }
         std::cout << "\n";
     }
     }
-
-    void printinv(){
-        for (int i = 0; i < dim; i++){
-        for (int j = 0; j < dim; j++){
-            std::cout << inv[i][j]<< "\t";
-        }
-        std::cout << "\n";
-    }
-    }
-    //efficiency?
 
     
     //get inverse
@@ -93,8 +74,8 @@ int main(){
     std::cin >> A.dim;
 
     std::cout << "please enter the entries of the matrix" << std::endl;
-    A.input();
-    A.printmat();
+    A.inputmat();
+    A.print(A.mat);
 
     element b[2] = {1,2};
 
