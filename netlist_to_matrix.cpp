@@ -137,13 +137,22 @@ std::vector<std::string> Getinfo(std::string aline)
     return info;
 }
 
+
+//AC <amplitude> <phase>
+//A*exp(j*theta)
+//A*(cos(theta)+isin(theta))
 std::complex<float> get_AC(std::string str1, std::string str2){
     str1.erase(0,3);
     int idx = str2.size()-1;
     str2.erase(idx,1);
-    std::istringstream is('(' + str1 + "," + str2 + ')');
+    float A = std::stof(str1);
+    float theta = std::stof(str2);
+    
     std::complex<float> c;
-    is >> c;
+
+    c.real(A*cos(theta));
+    c.imag(A*sin(theta));
+
     return c;
 }
 
@@ -463,7 +472,8 @@ public:
 
         //write a program to obtain the voltage between node c and d
         //need to finish this
-        //Vcd = ??;
+        
+        int Vcd = 0.7; //find this value from dc or input manually
 
         I = Vcd * string_to_float(info[5]);
 
@@ -480,7 +490,16 @@ struct Matrix{
     
     int dim;
     element** mat;
-    element** inv;
+
+    Matrix(int n){
+        dim = n;
+        mat = new element* [dim];
+        for(int i = 0; i < dim; i++){
+            mat[i] = new element [dim];
+        }
+    }
+
+    /*
 
     void delete(element** a){
         for(int i = 0; i < dim; ++i)
@@ -490,48 +509,15 @@ struct Matrix{
         delete []a;
     }
 
-    void set_dim(){
-        mat = new element* [dim];
-        inv = new element* [dim];
-        for(int i = 0; i < dim; i++)
-        {
-               mat[i] = new element [dim];
-               inv[i] = new element [dim];
-        }
-    } 
+    */
 
-
-    void inputmat(){
-        set_dim();
+    void print(){
         for (int i = 0; i < dim; i++){
         for (int j = 0; j < dim; j++){
-            std::cin >> mat[i][j]; 
-        }
-    }
-    }
-
-    void print(element** a){
-        for (int i = 0; i < dim; i++){
-        for (int j = 0; j < dim; j++){
-            std::cout << a[i][j]<< "\t";
+            std::cout << mat[i][j]<< "\t";
         }
         std::cout << "\n";
     }
-    }
-
-    
-    //get inverse
-
-
-    element* matsolv(element* b, element* x){
-        
-        for(int i=0; i<dim; i++){
-            for (int j=0; j<dim; j++){
-                b[i] += inv[i][j] * x[j];
-            }
-        }
-        delete_inv();
-        return b;
     }
 
 };
@@ -581,11 +567,15 @@ int main(){
     int n = 4; //number of nodes
 
     //creating a matrix
-    Matrix A;
-    A.dim = n;
+    Matrix A(n);
 
     //creating the right hand side vector
-    element b[n] = {0};
+    element* b;
+    b = new element[n];
+
+    for(int i =0; i<n; i++){
+        b[i] = 0;
+    }
 
     
     //vector 'line' only contanis component now
@@ -609,25 +599,25 @@ int main(){
 
             Resistor R(info);
 
-            int i = R.getNodeA;
-            int j = R.getNodeB;
+            int i = R.getNodeA();
+            int j = R.getNodeB();
             if(j<i){
                 int tmp = j;
                 j = i;
                 i = tmp;
             }
 
-            A[i][i] += R.G; //eg. G11
-            A[j][j] += R.G; //eg. G22
+            A.mat[i][i] += R.G; //eg. G11
+            A.mat[j][j] += R.G; //eg. G22
 
             for(int k =i+1; k<n; k++){   //eg. G1n and Gn1
-                A[i][k] -= R.G;
-                A[k][i] -= R.G;
+                A.mat[i][k] -= R.G;
+                A.mat[k][i] -= R.G;
             }
             for(int k =0; k<j; k++){   //eg. G2n and Gn2
                 if(k!=i){
-                    A[j][k] -= R.G;
-                    A[k][j] -= R.G;
+                    A.mat[j][k] -= R.G;
+                    A.mat[k][j] -= R.G;
                 }
             }
             
@@ -636,8 +626,8 @@ int main(){
         if(firstLetter == 'C'){
             
             Capacitor C(info);
-            int i = C.getNodeA;
-            int j = C.getNodeA;
+            int i = C.getNodeA();
+            int j = C.getNodeB();
             
             if(j<i){
                 int tmp = j;
@@ -645,17 +635,17 @@ int main(){
                 i = tmp;
             }
 
-            A[i][i] += C.G; //eg. G11
-            A[j][j] += C.G; //eg. G22
+            A.mat[i][i] += C.G; //eg. G11
+            A.mat[j][j] += C.G; //eg. G22
 
             for(int k =i+1; k<n; k++){   //eg. G1n and Gn1
-                A[i][k] -= C.G;
-                A[k][i] -= C.G;
+                A.mat[i][k] -= C.G;
+                A.mat[k][i] -= C.G;
             }
             for(int k =0; k<j; k++){   //eg. G2n and Gn2
                 if(k!=i){
-                    A[j][k] -= C.G;
-                    A[k][j] -= C.G;
+                    A.mat[j][k] -= C.G;
+                    A.mat[k][j] -= C.G;
                 }
             }
             
@@ -664,8 +654,8 @@ int main(){
         if(firstLetter == 'L'){
             
             Inductor L(info);
-            int i = L.getNodeA;
-            int j = L.getNodeA;
+            int i = L.getNodeA();
+            int j = L.getNodeB();
             
             if(j<i){
                 int tmp = j;
@@ -673,17 +663,17 @@ int main(){
                 i = tmp;
             }
 
-            A[i][i] += L.G; //eg. G11
-            A[j][j] += L.G; //eg. G22
+            A.mat[i][i] += L.G; //eg. G11
+            A.mat[j][j] += L.G; //eg. G22
 
             for(int k =i+1; k<n; k++){   //eg. G1n and Gn1
-                A[i][k] -= L.G;
-                A[k][i] -= L.G;
+                A.mat[i][k] -= L.G;
+                A.mat[k][i] -= L.G;
             }
             for(int k =0; k<j; k++){   //eg. G2n and Gn2
                 if(k!=i){
-                    A[j][k] -= L.G;
-                    A[k][j] -= L.G;
+                    A.mat[j][k] -= L.G;
+                    A.mat[k][j] -= L.G;
                 }
             }
             
@@ -692,8 +682,8 @@ int main(){
         if(firstLetter == 'D'){
         
             Diode D(info);
-            int i = D.getNodeA;
-            int j = D.getNodeA;
+            int i = D.getNodeA();
+            int j = D.getNodeA();
 
             //??????a diode is a one-way resistance, in the other direction it has infinite resistance
             
@@ -703,17 +693,17 @@ int main(){
                 i = tmp;
             }
 
-            A[i][i] += L.G; //eg. G11
-            A[j][j] += L.G; //eg. G22
+            A.mat[i][i] += D.G; //eg. G11
+            A.mat[j][j] += D.G; //eg. G22
 
             for(int k =i+1; k<n; k++){   //eg. G1n and Gn1
-                A[i][k] -= L.G;
-                A[k][i] -= L.G;
+                A.mat[i][k] -= D.G;
+                A.mat[k][i] -= D.G;
             }
             for(int k =0; k<j; k++){   //eg. G2n and Gn2
                 if(k!=i){
-                    A[j][k] -= L.G;
-                    A[k][j] -= L.G;
+                    A.mat[j][k] -= D.G;
+                    A.mat[k][j] -= D.G;
                 }
             }
             
@@ -741,10 +731,21 @@ int main(){
     //iterate again
 
     for(int i = 0; i < line.size(); i++){
+
+        //this part is repeated needs to be simplified
+
+        char firstLetter = line[i].at(0);
+        std::cout << firstLetter << std::endl;
+
+        std::vector<std::string> info;
+        info = Getinfo(line[i]);
+
+        //
+
         if(firstLetter == 'I'){
             Current_source I1(info);
-            int i = I1.getNodeA; //in
-            int j = I1.getNodeB; //out
+            int i = I1.getNodeA(); //in
+            int j = I1.getNodeB(); //out
             b[i] += I1.I;
             b[j] -= I1.I;
             
@@ -752,8 +753,8 @@ int main(){
 
         if(firstLetter == 'G'){
             V_Current_source G1(info);
-            int i = G1.getNodeA; //in
-            int j = G1.getNodeB; //out
+            int i = G1.getNodeA(); //in
+            int j = G1.getNodeB(); //out
             b[i] += G1.I;
             b[j] -= G1.I;
         }
@@ -762,24 +763,35 @@ int main(){
     //iterate again
     for(int i = 0; i < line.size(); i++){
 
+        //repeated again
+
+        char firstLetter = line[i].at(0);
+        std::cout << firstLetter << std::endl;
+
+        std::vector<std::string> info;
+        info = Getinfo(line[i]);
+        //
+
         if(firstLetter == 'V'){
 
             Voltage_source V1(info);
 
-            int i = V1.getNodeA; //anode
-            int j = V1.getNodeB; //cathode
+            int i = V1.getNodeA(); //anode
+            int j = V1.getNodeB(); //cathode
             b[j]+=b[i]; //i_supernode
             b[i] = V1.V; //v_src
 
-            A[j][j] += A[i][i];
+            A.mat[j][j] += A.mat[i][i];
 
             for(int k=0; k<n; k++){ //changing row i to represent vi = vj + vsrc
-                A[i][k] = 0;
+                A.mat[i][k] = 0;
             }
-            A[i][i] = 1;
-            A[i][j] = -1;
+            A.mat[i][i] = 1;
+            A.mat[i][j] = -1;
             
         }
 
     }
+
+    A.print();
 }
