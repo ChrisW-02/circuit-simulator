@@ -579,7 +579,7 @@ int main(){
 
     //write a program to get the number of nodes in the circuit
 
-    int n = 4; //number of nodes
+    int n = 3; //number of nodes
 
     
     //vector 'line' only contanis component now
@@ -626,10 +626,12 @@ int main(){
             int i = R.getNodeA();
             int j = R.getNodeB();
             if (i == 0){
+                j--;
                 A.mat[j][j] += R.G;
             }
 
             else if(j == 0){
+                i--;
                 A.mat[i][i] += R.G;
             }
             else{
@@ -664,10 +666,12 @@ int main(){
             int j = C.getNodeB();
 
             if (i == 0){
+                j--;
                 A.mat[j][j] += C.G;
             }
 
             else if(j == 0){
+                i--;
                 A.mat[i][i] += C.G;
             }
             else{
@@ -703,10 +707,12 @@ int main(){
             int i = L.getNodeA();
             int j = L.getNodeB();
             if (i == 0){
+                j--;
                 A.mat[j][j] += L.G;
             }
 
             else if(j == 0){
+                i--;
                 A.mat[i][i] += L.G;
             }
             else{
@@ -742,10 +748,12 @@ int main(){
 
             //??????a diode is a one-way resistance, in the other direction it has infinite resistance
             if (i == 0){
+                j--;
                 A.mat[j][j] += D.G;
             }
 
             else if(j == 0){
+                i--;
                 A.mat[i][i] += D.G;
             }
             else{
@@ -809,22 +817,22 @@ int main(){
 
         if(firstLetter == 'I'){
             Current_source I1(info);
-            int i = I1.getNodeA(); //in
-            int j = I1.getNodeB(); //out
+            int i = I1.getNodeA(); //in (tail of arrow)
+            int j = I1.getNodeB(); //out (head of arrow)
 
             if(i ==0){
                 j--;
-                b[j] -= I1.I;
+                b[j] += I1.I;
             }
             else if(j==0){
                 i--;
-                b[i] += I1.I;
+                b[i] -= I1.I;
             }
             else{
                 i--;
                 j--;
-                b[i] += I1.I;
-                b[j] -= I1.I;
+                b[i] -= I1.I;
+                b[j] += I1.I;
             }
             
         }
