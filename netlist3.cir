@@ -1,0 +1,9 @@
+* 2 node
+* A purely resistive circuit with AC current sources
+R1 N001 N002 20
+R2 N002 0 10
+V1 N001 0 AC(1 0)
+I1 N002 0 0.1
+.ac dec 10 100 10k
+.end
+
