@@ -39,7 +39,11 @@ int main(){
     }
 
     while(getline(infile, inputline)){
-        line.push_back(inputline);
+        if(inputline.empty()){
+        }
+        else{
+            line.push_back(inputline);
+        }
     }
 
     for(int i = 0; i < line.size(); i++){
