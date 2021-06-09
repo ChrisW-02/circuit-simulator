@@ -272,22 +272,34 @@ int main(){
 
             if(firstLetter == 'G'){
                 V_Current_source G1(info);
-                int i = G1.getNodeA(); // in
-                int j = G1.getNodeB(); // out
+                int i = G1.getNodeA()-1; // in
+                int j = G1.getNodeB()-1; // out
+                int k = G1.getNodeC()-1; // control +
+                int l = G1.getNodeD()-1; // control -
 
-                if(i ==0){
-                    j--;
-                    b_vec(j,0) -= G1.I;
+
+                //for none ground nodes
+                //for a, b, c, d nodes
+                //A(a,c)+=G
+                //A(a,d)-=G
+                //A(b,c)-=G
+                //A(b,d)+=G
+                if(i!= -1){              //!=-1 means not ground
+                    if(k!=-1){
+                        A_mat(i,k) +=G1.G;
+                          }
+                    if(l!=-1){
+                        A_mat(i,l) -=G1.G;
+                          }
                 }
-                else if(j==0){
-                    i--;
-                    b_vec(i,0) += G1.I;
-                }
-                else{
-                    i--;
-                    j--;
-                    b_vec(i,0) += G1.I;
-                    b_vec(j,0) -= G1.I;
+
+                if(j!= -1){
+                    if(k!=-1){
+                        A_mat(j,k) -=G1.G;
+                          }
+                    if(l!=-1){
+                        A_mat(j,l) +=G1.G;
+                          }
                 }
             }
         }
