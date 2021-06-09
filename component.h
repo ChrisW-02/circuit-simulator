@@ -148,32 +148,14 @@ std::complex<float> get_AC(std::string str1, std::string str2){
 
 // function to solve the magnitude of the phasor
 float get_magnitude(std::complex<float> val){
-    float re = val.real();
-    float im = val.imag();
-
-    float A = sqrt(pow(re,2) + pow(im,2));
+    float A = std::abs(val); // absolute value of complex
     return A;
 }
 
 // function to solve the phase of the phasor (theta)
 float get_phase(std::complex<float> val){
-    float re = val.real();
-    float im = val.imag();
-
-    if(re == 0){
-        if(im < 0){
-            return 270.0;
-        }
-        if(im > 0){
-            return 90.0;
-        }
-        return 0.0;
-    }
-    else if(im == 0 && re < 0){
-        return 180.0;
-    }
-
-    float theta = atan(im/re)*180 /M_PI;
+    float angle = std::arg(val); // phase angle of complex in radians
+    float theta = angle * (180.0/M_PI); // convert to radians
     return theta;
 }
 
@@ -478,13 +460,6 @@ public:
         NodeC = info[3];
         NodeD = info[4];
 
-        G = 0;
-
-        // write a program to obtain the voltage between node c and d
-        // need to finish this
-
-        float Vcd = 0.7; //find this value from dc or input manually
-
-        I = Vcd * string_to_float(info[5]);
+        G = string_to_float(info[5]);
     }
 };
