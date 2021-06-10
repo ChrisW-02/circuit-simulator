@@ -150,19 +150,19 @@ int main(){
 
                 if (i == 0){
                     j--;
-                    A_mat(j,j) += R.G * Re;
+                    A_mat(j,j) += R.G;
                 }
                 else if(j == 0){
                     i--;
-                    A_mat(i,i) += R.G * Re;
+                    A_mat(i,i) += R.G;
                 }
                 else{
                     i--;
                     j--;
-                    A_mat(i,i) += R.G * Re;
-                    A_mat(j,j) += R.G * Re;
-                    A_mat(i,j) -= R.G * Re;
-                    A_mat(j,i) -= R.G * Re;
+                    A_mat(i,i) += R.G;
+                    A_mat(j,j) += R.G;
+                    A_mat(i,j) -= R.G;
+                    A_mat(j,i) -= R.G;
                 }
             }
 
@@ -344,6 +344,8 @@ int main(){
                 }
 
                 else{
+                    i--;
+                    j--;
                     b_vec(j,0) += b_vec(i,0); //i_supernode
                     b_vec(i,0) = V1.V; //v_src
                     A_mat(j,j) += A_mat(i,i);
