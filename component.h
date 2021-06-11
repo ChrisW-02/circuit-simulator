@@ -354,9 +354,7 @@ public:
 
         // details for NPN (2N2222) BJT
         if(info[4] == "NPN"){
-            // gm = Ic/VT = 800mA/25mV = 32;
-            // Rbe = beta/gm = 200/32 = 6.25;
-            // r0 = VA/Ic = 100/0.8 = 125;
+            
             Ic.append("Ic_");
             Ic.append(info[0]);
             Ic.push_back(' ');
@@ -365,16 +363,13 @@ public:
             Ic = Ic + (info[3]);
             Ic.push_back(' ');
 
-            resistor_rbe.append("6.25");
-            resistor_r0.append("125");
-            Ic.append("AC(0.8 0)");
+            resistor_rbe.append("5k");
+            resistor_r0.append("100k");
+            Ic.append("AC(1m 0)");
         }
 
         // details for PNP (2N2907) BJT
         if(info[4] == "PNP"){
-            // gm = Ic/VT = 600mA/25mV = 24;
-            // Rbe = beta/gm = 250/24 = 10.4167;
-            // r0 = VA/Ic = 120/0.6 = 200;
             
             Ic.append("Ic_");
             Ic.append(info[0]);
@@ -384,9 +379,9 @@ public:
             Ic = Ic + (info[1]);
             Ic.push_back(' ');
 
-            resistor_rbe.append("10.4167");
-            resistor_r0.append("200");
-            Ic.append("AC(0.6 0)");
+            resistor_rbe.append("6.25k");
+            resistor_r0.append("120k");
+            Ic.append("AC(1m 0)");
         }
     }
 };
@@ -423,15 +418,7 @@ public:
 
         // details for NMOS (BSB012N03LX3) MOSFET
         if(info[4] == "NMOS"){
-            // gm = 2K(Vgs-Vt)
-            // r0 = VA/Id = ???;
-            // Id = gm * Vgs;
-
-            // Id = 0.2A
-            // Vt = 2V
-            // k = u*Cou*(W/L) = 0.713m
-            // gm = 2k(Vgs - Vt) = 2 ( k * Id)^0.5
-            // Id = k * (Vgs - Vt)^2 = 1.2m
+            
             // r0 = 1/(lamtha * Id) = 1/0.09 *1.2m = 9260
             Id.append("Id_");
             Id.append(info[0]);
@@ -441,14 +428,12 @@ public:
             Id = Id + (info[3]);
             Id.push_back(' ');
 
-            resistor_r0.append("9260");
+            resistor_r0.append("11k");
             Id.append("AC(0.001 0)");
         }
 
         // details for PMOS (FDS4435A) MOSFET
         if(info[4] == "PMOS"){
-            // Id = -0.2A (continuous drain current)
-            // rds(on) = 14 ohms when Vgs = -10V
             
             Id.append("Id_");
             Id.append(info[0]);
@@ -458,8 +443,8 @@ public:
             Id = Id + (info[1]);
             Id.push_back(' ');
 
-            resistor_r0.append("16670");
-            Id.append("AC(0.0012 0)");
+            resistor_r0.append("20k");
+            Id.append("AC(0.001 0)");
         }
     }
 };
