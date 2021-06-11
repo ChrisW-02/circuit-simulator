@@ -70,9 +70,8 @@ int main(){
     }
 
     std::vector<netvec> results;
-    std::vector<std::string> bode_results;
 
-    std::cout << "No. of steps: " << n_steps << std::endl;
+    //std::cout << "No. of steps: " << n_steps << std::endl;
 
     for(int i = 0; i < line.size(); i++){
         line = newline(line);
@@ -83,9 +82,9 @@ int main(){
            std::cout << line[i] << std::endl;
     }
 
-    std::cout << "Get Nodes" << std::endl;
+    //std::cout << "Get Nodes" << std::endl;
 
-    std::cout << "Line Size: " << line.size() << std::endl;
+    //std::cout << "Line Size: " << line.size() << std::endl;
 
    // get the number of nodes in the circuit
    int tmp = 0; // record highest node
@@ -103,11 +102,11 @@ int main(){
         if(b > tmp){
             tmp = b;
         }
-        std::cout << "tmp: "<< tmp << std::endl;
+        //std::cout << "tmp: "<< tmp << std::endl;
     }
 
     int n = tmp; // number of nodes
-    std::cout << "n: " << n << std::endl;
+    //std::cout << "n: " << n << std::endl;
 
     // if file is doing ac analysis, then continue
     for(float i = 0; i <= n_steps; i++){
@@ -135,7 +134,7 @@ int main(){
         for(int i = 0; i < line.size(); i++){
             // determine the first letter
             char firstLetter = line[i].at(0);
-            std::cout << "currently taking in: "<< firstLetter << std::endl;
+            //std::cout << "currently taking in: "<< firstLetter << std::endl;
 
             std::vector<std::string> info;
             info = Getinfo(line[i]);
@@ -167,8 +166,7 @@ int main(){
             }
 
             if(firstLetter == 'C'){
-                Capacitor C(info);
-                C.w = w;
+                Capacitor C(info,w);
                 int i = C.getNodeA();
                 int j = C.getNodeB();
 
@@ -191,8 +189,7 @@ int main(){
             }
 
             if(firstLetter == 'L'){
-                Inductor L(info);
-                L.w = w;
+                Inductor L(info, w);
                 int i = L.getNodeA();
                 int j = L.getNodeB();
 
@@ -234,17 +231,17 @@ int main(){
                 line.push_back(M.resistor_r0);
                 line.push_back(M.Id);
             }
+            
 
-            std::cout << "exiting first loop" << std::endl;
         }
 
         // iterate again for current source(s)
         for(int i = 0; i < line.size(); i++){
-            std::cout << "entering second loop" << std::endl;
+            //std::cout << "entering second loop" << std::endl;
 
             // this part is repeated so it needs to be simplified
             char firstLetter = line[i].at(0);
-            std::cout << "currently taking in: " << firstLetter << std::endl;
+            //std::cout << "currently taking in: " << firstLetter << std::endl;
 
             std::vector<std::string> info;
             info = Getinfo(line[i]);
@@ -296,21 +293,21 @@ int main(){
                 if(j!= -1){
                     if(k!=-1){
                         A_mat(j,k) -=G1.G;
-                          }
+                    }
                     if(l!=-1){
                         A_mat(j,l) +=G1.G;
-                          }
+                    }
                 }
             }
         }
 
         // iterate again for voltage source(s)
         for(int i = 0; i < line.size(); i++){
-            std::cout << "entering second loop" << std::endl;
+            //std::cout << "entering second loop" << std::endl;
 
             // repeated again
             char firstLetter = line[i].at(0);
-            std::cout << "currently taking in: "<< firstLetter << std::endl;
+            //std::cout << "currently taking in: "<< firstLetter << std::endl;
 
             std::vector<std::string> info;
             info = Getinfo(line[i]);
@@ -326,10 +323,10 @@ int main(){
 
                     for(int k = 0; k < n; k++){
                         //changing row j to represent vj = -vsrc
-                        A_mat(j,k) = 0.0f + 0.0f*Im;
+                        A_mat(j,k) = 0;
                     }
 
-                    A_mat(j,j) = -1.0f + 0.0f*Im;
+                    A_mat(j,j) = -1;
                 }
                 else if(j ==0){
                     i--;
@@ -337,10 +334,10 @@ int main(){
 
                     for(int k = 0; k < n; k++){
                         //changing row i to represent vi = vsrc
-                        A_mat(i,k) = 0.0f + 0.0f*Im;
+                        A_mat(i,k) = 0;
                     }
 
-                    A_mat(i,i) = 1.0f + 0.0f*Im;
+                    A_mat(i,i) = 1;
                 }
 
                 else{
@@ -353,11 +350,11 @@ int main(){
 
                     for(int k = 0; k < n; k++){
                         //changing row i to represent vi = vj + vsrc
-                        A_mat(i,k) = 0.0f + 0.0f*Im;
+                        A_mat(i,k) = 0;
                     }
 
-                    A_mat(i,i) = 1.0f + 0.0f*Im;
-                    A_mat(i,j) = -1.0f + 0.0f*Im;
+                    A_mat(i,i) = 1;
+                    A_mat(i,j) = -1;
                 }
             }
         }
@@ -394,6 +391,8 @@ int main(){
 
         results.push_back(voltage_at_nodes);
     }
+    
+    
 
     std::ofstream outfile;
     outfile.open("voltage.txt");
@@ -411,81 +410,129 @@ int main(){
     }
 
     outfile.close();
+    
+    std::string in;
+    std::cout<<"Generating Transfer Function"<<std::endl;
+    
+    while(in!="END"){
+        std::vector<std::string> bode_results;
 
     // user input values for the reference node and output node
-    int n_ref, n_out;
-    std::cout << "Enter the reference node: ";
-    std::cin >> n_ref;
-    while(n_ref >= (n+1)){
-        std::cout << "Error, invalid reference node value. Enter a valid value for the reference node: ";
+        int n_ref, n_out;
+        std::cout << "Enter the reference node: ";
         std::cin >> n_ref;
-    }
-    std::cout << "Enter the output node: ";
-    std::cin >> n_out;
-    while((n_out >= (n+1)) || (n_out == n_ref)){
-        std::cout << "Error, invalid output node value. Enter a valid value for the output node: ";
+        while(n_ref >= (n+1)){
+            std::cout << "Error, invalid reference node value. Enter a valid value for the reference node: ";
+            std::cin >> n_ref;
+        }
+            std::cout << "Enter the output node: ";
         std::cin >> n_out;
-    }
-    n_ref = n_ref - 1;
-    n_out = n_out - 1;
-
-    std::cout << "Reference Node Values are: " << std::endl;
-    if(n_ref == -1){
-        for(int i = 0; i < results.size(); i++){
-            std::cout << "(0,0)" << std::endl;
+        
+        while((n_out >= (n+1)) || (n_out == n_ref)){
+            std::cout << "Error, invalid output node value. Enter a valid value for the output node: ";
+            std::cin >> n_out;
+            
         }
-    }
-    else{
-        for(int i = 0; i < results.size(); i++){
-            std::cout << results[i][n_ref] << std::endl;
-        }
-    }
+    
+        std::string heading;
+        heading.append("Freq.   ");
+        heading.append("V(n");
+        heading.append(std::to_string(n_out));
+        heading.append(")/V(n");
+        heading.append(std::to_string(n_ref));
+        heading.append(")");
+        bode_results.push_back(heading);
+    
+        n_ref = n_ref - 1;
+        n_out = n_out - 1;
 
-    std::cout << std::endl << "Output Node Values are: " << std::endl;
-    for(int i = 0; i < results.size(); i++){
-        std::cout << results[i][n_out] << std::endl;
-    }
-
-    std::cout << std::endl << "Calculation of Bode Plot Entries: " << std::endl;
-    for(int i = 0; i < results.size(); i++){
-        element a = results[i][n_ref];
-        element b = results[i][n_out];
-        element c; // phasor
-
+        std::cout << "Reference Node Values are: " << std::endl;
         if(n_ref == -1){
-            // if n_ref = -1, then value is referring to ground
-            c = b;
+            for(int i = 0; i < results.size(); i++){
+                std::cout << "(0,0)" << std::endl;
+            }
         }
         else{
-            c = b / a; // transfer function = output node / reference node
+            for(int i = 0; i < results.size(); i++){
+                std::cout << results[i][n_ref] << std::endl;
+            }
         }
 
-        float magnitude = get_magnitude(c);
+        std::cout << std::endl << "Output Node Values are: " << std::endl;
+        for(int i = 0; i < results.size(); i++){
+            std::cout << results[i][n_out] << std::endl;
+        }
+    
+    
+
+        std::cout << std::endl << "Calculation of Bode Plot Entries: " << std::endl;
+        for(int i = 0; i < results.size(); i++){
+            element a = results[i][n_ref];
+            element b = results[i][n_out];
+            element c; // phasor
+
+            if(n_ref == -1){
+            // if n_ref = -1, then value is referring to ground
+                c = b;
+            }
+            else{
+                c = b / a; // transfer function = output node / reference node
+            }
+        
+        //-----------debug using cartesian form
+        
+        /*
+            float re = c.real();
+            float im = c.imag();
+            float f_n = (string_to_float(info2[3])) * pow(10, i/(string_to_float(info2[2])));
+            std::string values;
+            values.append(std::to_string(f_n));
+            values.append("    ");
+            values.append(std::to_string(re));
+            values.append(", ");
+            values.append(std::to_string(im));
+        */
+        
+        
+
+        
         float phase = get_phase(c);
+            float magnitude = 20*log10(get_magnitude(c));
 
         float f_n = (string_to_float(info2[3])) * pow(10, i/(string_to_float(info2[2])));
-        float w = 2* M_PI * f_n;
+        //float w = 2* M_PI * f_n;
 
         // store bode plot results into bode_results in CSV format
         std::string values;
-        values.append(std::to_string(w));
+        values.append(std::to_string(f_n));
         values.append(", ");
         values.append(std::to_string(magnitude));
-        values.append(", ");
+        values.append("dB, ");
         values.append(std::to_string(phase));
+       
+         
 
-        bode_results.push_back(values);
-    }
+            bode_results.push_back(values);
+        }
 
     // print bode plot results (visualization purposes)
     for(int i = 0; i < bode_results.size(); i++){
         std::cout << bode_results[i] << std::endl;
     }
-
     std::cout << std::endl;
+        
+    std::string title;
+        title.append("bode_plot_");
+        title.append("n");
+        title.append(std::to_string(n_out+1));
+        title.append("onn");
+        title.append(std::to_string(n_ref+1));
+        title.append(".txt");
+        
+        std::cout<<title<<std::endl;
 
     std::ofstream outfile2;
-    outfile2.open("bode_plot_values.txt");
+    outfile2.open(title);
 
     if(!outfile2.is_open()){
         std::cout << "error opening file" << std::endl;
@@ -497,6 +544,12 @@ int main(){
     }
 
     outfile2.close();
+        
+    std::cout<<"Enter 'END' to end the program or enter anything to generate another bode plot"<<std::endl;
+    std::cin >> in;
+    }
+    
+    
     std::cout << "------------------------------------------------------------" << std::endl;
     std::cout << "The AC Circuit Simulation is completed." << std::endl;
     std::cout << "Please view the results for the bode plot in the text file." << std::endl;
@@ -505,3 +558,4 @@ int main(){
     std::cout << "Credits to Aman Narain, Christina Wang, and Yuhe Zhang" << std::endl;
     std::cout << "------------------------------------------------------------" << std::endl << std::endl;
 }
+

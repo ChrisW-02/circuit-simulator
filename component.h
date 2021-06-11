@@ -68,7 +68,6 @@ public:
     std::complex<float> G;
     std::complex<float> I;
     std::complex<float> V;
-    float w;
 
     virtual ~Component(){};
 
@@ -258,7 +257,7 @@ public:
         G = 0;
     }
 
-    Capacitor(std::vector<std::string> info ){
+    Capacitor(std::vector<std::string> info, double w){
         CompName = info[0];
         NodeA = info[1];
         NodeB = info[2];
@@ -273,7 +272,7 @@ public:
         G = 0;
     }
 
-    Inductor(std::vector<std::string> info){
+    Inductor(std::vector<std::string> info, double w){
         CompName = info[0];
         NodeA = info[1];
         NodeB = info[2];
