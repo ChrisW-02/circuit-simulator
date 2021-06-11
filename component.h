@@ -165,29 +165,16 @@ std::vector<std::string> newline(std::vector<std::string> line){
     std::string c = "c";
     std::string endFile = "end";
 
-    std::string::size_type idx;
+    std::string::size_type idx1, idx2, idx3;
 
     for(int i = 0; i < line.size(); i++){
-        idx = line[i].find(ast);
-        if(idx == std::string::npos){}
+        idx1 = line[i].find(ast);
+        idx2 = line[i].find(c);
+        idx3 = line[i].find(endFile);
+        
+        if(idx1 == std::string::npos && idx2 == std::string::npos && idx3 == std::string::npos){}
         else{
             line.erase(line.begin() + (i));
-        }
-    }
-
-    for(int i = 0; i < line.size(); i++){
-        idx = line[i].find(c);
-        if(idx == std::string::npos){}
-        else{
-            line.erase(line.begin() + i);
-        }
-    }
-
-    for(int i = 0; i < line.size(); i++){
-        idx = line[i].find(endFile);
-        if(idx == std::string::npos){}
-        else{
-            line.erase(line.begin() + i);
         }
     }
 
