@@ -369,9 +369,9 @@ public:
             Gc.push_back(' ');
             Gc = Gc + (info[1]); //out
             Gc.push_back(' ');
-            Gc = Gc + (info[2]); //+
+            Gc = Gc + (info[3]); //+
             Gc.push_back(' ');
-            Gc = Gc + (info[3]); //-
+            Gc = Gc + (info[2]); //-
             Gc.push_back(' ');
 
             resistor_rbe.append("6.25k");
@@ -427,7 +427,7 @@ public:
             Gd = Gd + (info[3]);
             Gd.push_back(' ');
 
-            resistor_r0.append("11k");
+            resistor_r0.append("9259");
             Gd.append("1.1m"); //gm = 2(K*Id)^0.5=1.1mA/V assume K = 0.25 Id=1.2mA
         }
 
@@ -441,12 +441,12 @@ public:
             Gd.push_back(' ');
             Gd = Gd + (info[1]);
             Gd.push_back(' ');
-            Gd = Gd + (info[2]);
-            Gd.push_back(' ');
             Gd = Gd + (info[3]);
             Gd.push_back(' ');
+            Gd = Gd + (info[2]);
+            Gd.push_back(' ');
 
-            resistor_r0.append("20k");
+            resistor_r0.append("16667");
             Gd.append("1.1m"); //gm = 2(K*Id)^0.5=1.1mA/V assume K = 0.25 Id=1.2mA
         }
         }
