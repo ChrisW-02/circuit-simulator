@@ -9,6 +9,7 @@
 #include <iomanip>
 #include <stdexcept>
 #include <Eigen/Dense>
+#include <chrono>
 
 #include "component.h"
 
@@ -17,6 +18,10 @@ typedef std::vector<element> netvec;
 
 
 int main(){
+    std::chrono::time_point<std::chrono::steady_clock> start, end, stop1, resume1,stop2, resume2,stop3, resume3,stop4, resume4,stop5, resume5,stop6, resume6;
+    std::chrono::duration<float> duration;
+    start = std::chrono::high_resolution_clock::now();
+    
     std::cout << "------------------------------------------------------------" << std::endl;
     std::cout << "Welcome to the AC Circuit Simulation!" << std::endl;
     std::cout << "------------------------------------------------------------" << std::endl << std::endl;
@@ -28,7 +33,9 @@ int main(){
     std::string filename;
 
     std::cout << "Please enter name of the input file: ";
+    stop1 = std::chrono::high_resolution_clock::now();
     std::cin >> filename;
+    resume1 = std::chrono::high_resolution_clock::now();
 
     std::ifstream infile;
     infile.open(filename);
@@ -417,17 +424,25 @@ int main(){
     // user input values for the reference node and output node
         int n_ref, n_out;
         std::cout << "Enter the reference node: ";
+        stop2 = std::chrono::high_resolution_clock::now();
         std::cin >> n_ref;
+        resume2 = std::chrono::high_resolution_clock::now();
         while(n_ref >= (n+1)){
             std::cout << "Error, invalid reference node value. Enter a valid value for the reference node: ";
+            stop3 = std::chrono::high_resolution_clock::now();
             std::cin >> n_ref;
+            resume3 = std::chrono::high_resolution_clock::now();
         }
             std::cout << "Enter the output node: ";
+        stop4 = std::chrono::high_resolution_clock::now();
         std::cin >> n_out;
+        resume4 = std::chrono::high_resolution_clock::now();
         
         while((n_out >= (n+1)) || (n_out == n_ref)){
             std::cout << "Error, invalid output node value. Enter a valid value for the output node: ";
+            stop5 = std::chrono::high_resolution_clock::now();
             std::cin >> n_out;
+            resume5 = std::chrono::high_resolution_clock::now();
             
         }
     
@@ -544,12 +559,18 @@ int main(){
     outfile2.close();
         
     std::cout<<"Enter 'END' to end the program or enter anything to generate another bode plot"<<std::endl;
-    std::cin >> in;
+        stop6 = std::chrono::high_resolution_clock::now();
+        std::cin >> in;
+        resume6 = std::chrono::high_resolution_clock::now();
     }
     
+    end = std::chrono::high_resolution_clock::now();
+    
+    duration= end - start -(resume1-stop1)-(resume2 - stop2)-(resume3-stop3)-(resume4 - stop4)-(resume5-stop5)-(resume6 - stop6);
     
     std::cout << "------------------------------------------------------------" << std::endl;
     std::cout << "The AC Circuit Simulation is completed." << std::endl;
+    std::cout << "The execution time is "<< duration.count() <<"s"<< std::endl;
     std::cout << "Please view the results for the bode plot in the text file." << std::endl;
     std::cout << std::endl;
     std::cout << "Thank you for using the AC Circuit Simulator software package." << std::endl;
