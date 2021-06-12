@@ -124,9 +124,6 @@ int main(){
         A_mat.setZero(); // set all matrix values to zero
         //std::cout << A_mat << std::endl;
 
-        const std::complex<float> Re(1.0f, 0.0f); // set real part
-        const std::complex<float> Im(0.0f, 1.0f); // set imaginary part
-
         Eigen::MatrixXcf b_vec(n,1); // creation of b matrix
         Eigen::MatrixXcf x_vec(n,1); // creation of x matrix
         b_vec.setZero(); // set values of b matrix to zero
@@ -222,14 +219,14 @@ int main(){
                 BJT Q(info);
                 line.push_back(Q.resistor_rbe);
                 line.push_back(Q.resistor_r0);
-                line.push_back(Q.Ic);
+                line.push_back(Q.Gc);
             }
 
             if(firstLetter == 'M'){
                 MOSFET M(info);
                 line.push_back(M.resistor_rgs);
                 line.push_back(M.resistor_r0);
-                line.push_back(M.Id);
+                line.push_back(M.Gd);
             }
             
 
@@ -481,7 +478,7 @@ int main(){
         
         //-----------debug using cartesian form
         
-        /*
+        
             float re = c.real();
             float im = c.imag();
             float f_n = (string_to_float(info2[3])) * pow(10, i/(string_to_float(info2[2])));
@@ -491,8 +488,9 @@ int main(){
             values.append(std::to_string(re));
             values.append(", ");
             values.append(std::to_string(im));
-        */
         
+        
+        /*
         
 
         
@@ -510,7 +508,7 @@ int main(){
         values.append("dB, ");
         values.append(std::to_string(phase));
        
-         
+         */
 
             bode_results.push_back(values);
         }
