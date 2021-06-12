@@ -130,7 +130,7 @@ std::vector<std::string> Getinfo(std::string aline){
 // AC function is in form <amplitude> <phase>
 std::complex<float> get_AC(std::string str1, std::string str2){
     str1.erase(0,3);
-    int idx = str2.size()-1;
+    float idx = str2.size()-1;
     str2.erase(idx,1);
     float A = std::stof(str1);
     float theta = std::stof(str2);
