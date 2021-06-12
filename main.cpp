@@ -478,7 +478,7 @@ int main(){
         
         //-----------debug using cartesian form
         
-        
+        /*
             float re = c.real();
             float im = c.imag();
             float f_n = (string_to_float(info2[3])) * pow(10, i/(string_to_float(info2[2])));
@@ -489,8 +489,8 @@ int main(){
             values.append(", ");
             values.append(std::to_string(im));
         
+        */
         
-        /*
         
 
         
@@ -508,7 +508,7 @@ int main(){
         values.append("dB, ");
         values.append(std::to_string(phase));
        
-         */
+         
 
             bode_results.push_back(values);
         }
