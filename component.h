@@ -132,8 +132,8 @@ std::complex<float> get_AC(std::string str1, std::string str2){
     str1.erase(0,3);
     float idx = str2.size()-1;
     str2.erase(idx,1);
-    float A = std::stof(str1);
-    float theta = std::stof(str2);
+    float A = string_to_float(str1);
+    float theta = string_to_float(str2);
     theta = theta / 180 * M_PI;
 
     std::complex<float> c;
