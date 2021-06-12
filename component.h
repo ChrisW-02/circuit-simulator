@@ -316,7 +316,7 @@ public:
 
     std::string resistor_rbe;
     std::string resistor_r0;
-    std::string Ic;
+    std::string Gc;
 
     BJT(std::vector<std::string> info){
         CompName = info[0];
@@ -341,33 +341,42 @@ public:
         // details for NPN (2N2222) BJT
         if(info[4] == "NPN"){
             
-            Ic.append("Ic_");
-            Ic.append(info[0]);
-            Ic.push_back(' ');
-            Ic = Ic + (info[1]);
-            Ic.push_back(' ');
-            Ic = Ic + (info[3]);
-            Ic.push_back(' ');
+            Gc.append("Gc_");
+            Gc.append(info[0]);
+            Gc.push_back(' ');
+            Gc = Gc + (info[1]); //in
+            Gc.push_back(' ');
+            Gc = Gc + (info[3]); //out
+            Gc.push_back(' ');
+            Gc = Gc + (info[2]); //+
+            Gc.push_back(' ');
+            Gc = Gc + (info[3]); //-
+            Gc.push_back(' ');
+            
 
             resistor_rbe.append("5k");
             resistor_r0.append("100k");
-            Ic.append("AC(1m 0)");
+            Gc.append("0.04"); // gm = Ic/Vt = 1m/25m = 0.04
         }
 
         // details for PNP (2N2907) BJT
         if(info[4] == "PNP"){
             
-            Ic.append("Ic_");
-            Ic.append(info[0]);
-            Ic.push_back(' ');
-            Ic = Ic + (info[3]);
-            Ic.push_back(' ');
-            Ic = Ic + (info[1]);
-            Ic.push_back(' ');
+            Gc.append("Gc_");
+            Gc.append(info[0]);
+            Gc.push_back(' ');
+            Gc = Gc + (info[3]); //in
+            Gc.push_back(' ');
+            Gc = Gc + (info[1]); //out
+            Gc.push_back(' ');
+            Gc = Gc + (info[2]); //+
+            Gc.push_back(' ');
+            Gc = Gc + (info[3]); //-
+            Gc.push_back(' ');
 
             resistor_rbe.append("6.25k");
             resistor_r0.append("120k");
-            Ic.append("AC(1m 0)");
+            Gc.append("0.04");
         }
     }
 };
@@ -377,7 +386,7 @@ class MOSFET: public Component{
 public:
     std::string resistor_rgs;
     std::string resistor_r0;
-    std::string Id;
+    std::string Gd;
 
     MOSFET(std::vector<std::string> info){
         CompName = info[0];
@@ -406,33 +415,41 @@ public:
         if(info[4] == "NMOS"){
             
             // r0 = 1/(lamtha * Id) = 1/0.09 *1.2m = 9260
-            Id.append("Id_");
-            Id.append(info[0]);
-            Id.push_back(' ');
-            Id = Id + (info[1]);
-            Id.push_back(' ');
-            Id = Id + (info[3]);
-            Id.push_back(' ');
+            Gd.append("Gd_");
+            Gd.append(info[0]);
+            Gd.push_back(' ');
+            Gd = Gd + (info[1]);
+            Gd.push_back(' ');
+            Gd = Gd + (info[3]);
+            Gd.push_back(' ');
+            Gd = Gd + (info[2]);
+            Gd.push_back(' ');
+            Gd = Gd + (info[3]);
+            Gd.push_back(' ');
 
             resistor_r0.append("11k");
-            Id.append("AC(0.001 0)");
+            Gd.append("1.1m"); //gm = 2(K*Id)^0.5=1.1mA/V assume K = 0.25 Id=1.2mA
         }
 
         // details for PMOS (FDS4435A) MOSFET
         if(info[4] == "PMOS"){
             
-            Id.append("Id_");
-            Id.append(info[0]);
-            Id.push_back(' ');
-            Id = Id + (info[3]);
-            Id.push_back(' ');
-            Id = Id + (info[1]);
-            Id.push_back(' ');
+            Gd.append("Gd_");
+            Gd.append(info[0]);
+            Gd.push_back(' ');
+            Gd = Gd + (info[3]);
+            Gd.push_back(' ');
+            Gd = Gd + (info[1]);
+            Gd.push_back(' ');
+            Gd = Gd + (info[2]);
+            Gd.push_back(' ');
+            Gd = Gd + (info[3]);
+            Gd.push_back(' ');
 
             resistor_r0.append("20k");
-            Id.append("AC(0.001 0)");
+            Gd.append("1.1m"); //gm = 2(K*Id)^0.5=1.1mA/V assume K = 0.25 Id=1.2mA
         }
-    }
+        }
 };
 
 // class for voltage controlled current source
