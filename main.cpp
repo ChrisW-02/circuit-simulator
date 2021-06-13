@@ -18,8 +18,8 @@ typedef std::vector<element> netvec;
 
 
 int main(){
-    std::chrono::time_point<std::chrono::steady_clock> start, end, stop1, resume1,stop2, resume2,stop3, resume3,stop4, resume4,stop5, resume5,stop6, resume6;
-    std::chrono::duration<float> duration;
+    std::chrono::time_point<std::chrono::steady_clock> start, end, stop1, resume1,stop2, resume2,stop3, resume3;
+    std::chrono::duration<float> duration, pause, pausetest;
     start = std::chrono::high_resolution_clock::now();
     
     std::cout << "------------------------------------------------------------" << std::endl;
@@ -36,7 +36,10 @@ int main(){
     stop1 = std::chrono::high_resolution_clock::now();
     std::cin >> filename;
     resume1 = std::chrono::high_resolution_clock::now();
-
+    pause = start - start;
+    pausetest = (resume1 - stop1);
+    pause+=pausetest;
+    
     std::ifstream infile;
     infile.open(filename);
 
@@ -52,6 +55,8 @@ int main(){
             line.push_back(inputline);
         }
     }
+    
+    //------prints the netlist
 
     for(int i = 0; i < line.size(); i++){
            std::cout << line[i] << std::endl;
@@ -83,15 +88,14 @@ int main(){
     for(int i = 0; i < line.size(); i++){
         line = newline(line);
     }
+    
+    //-------prints the component lines
 
     // vector 'line' only contains component now
-    for(int i = 0; i < line.size(); i++){
-           std::cout << line[i] << std::endl;
-    }
+    //for(int i = 0; i < line.size(); i++){
+    //       std::cout << line[i] << std::endl;
+    //}
 
-    //std::cout << "Get Nodes" << std::endl;
-
-    //std::cout << "Line Size: " << line.size() << std::endl;
 
    // get the number of nodes in the circuit
    int tmp = 0; // record highest node
@@ -109,11 +113,9 @@ int main(){
         if(b > tmp){
             tmp = b;
         }
-        //std::cout << "tmp: "<< tmp << std::endl;
     }
 
     int n = tmp; // number of nodes
-    //std::cout << "n: " << n << std::endl;
 
     // if file is doing ac analysis, then continue
     for(float i = 0; i <= n_steps; i++){
@@ -129,7 +131,6 @@ int main(){
         // creation of a (complex number) matrix using number of nodes
         Eigen::MatrixXcf A_mat(n,n);
         A_mat.setZero(); // set all matrix values to zero
-        //std::cout << A_mat << std::endl;
 
         Eigen::MatrixXcf b_vec(n,1); // creation of b matrix
         Eigen::MatrixXcf x_vec(n,1); // creation of x matrix
@@ -241,7 +242,6 @@ int main(){
 
         // iterate again for current source(s)
         for(int i = 0; i < line.size(); i++){
-            //std::cout << "entering second loop" << std::endl;
 
             // this part is repeated so it needs to be simplified
             char firstLetter = line[i].at(0);
@@ -285,7 +285,7 @@ int main(){
                 //A(a,d)-=G
                 //A(b,c)-=G
                 //A(b,d)+=G
-                if(i!= -1){              //!=-1 means not ground
+                if(i!= -1){              //not=-1 means not ground
                     if(k!=-1){
                         A_mat(i,k) +=G1.G;
                           }
@@ -307,8 +307,6 @@ int main(){
 
         // iterate again for voltage source(s)
         for(int i = 0; i < line.size(); i++){
-            //std::cout << "entering second loop" << std::endl;
-
             // repeated again
             char firstLetter = line[i].at(0);
             //std::cout << "currently taking in: "<< firstLetter << std::endl;
@@ -365,7 +363,7 @@ int main(){
 
         std::cout << "----------------------------------------" << std::endl;
 
-        // print the A matrix and b vector (visualization purposes)
+         //print the A matrix and b vector (visualization purposes)
         std::cout << std::endl << "the A matrix " << std::endl;
         std::cout << A_mat << std::endl;
 
@@ -377,14 +375,16 @@ int main(){
         std::cout << std::endl << "the inverse A matrix" << std::endl;
         std::cout << A_inv << std::endl;
 
-        std::cout << std::endl << "test the inverse matrix (should produce identity matrix)" << std::endl;
-        std::cout << A_mat * A_inv << std::endl;
+        //std::cout << std::endl << "test the inverse matrix (should produce identity matrix)" << std::endl;
+        //std::cout << A_mat * A_inv << std::endl;
 
         std::cout << std::endl << "the x vector (solution)" << std::endl;
         x_vec = A_inv * b_vec;
         std::cout << x_vec << std::endl;
 
         std::cout << std::endl;
+        
+        std::cout << "----------------------------------------" << std::endl;
 
         // store values of x vector (matrix) into results vector to save to a file
         netvec voltage_at_nodes;
@@ -420,32 +420,34 @@ int main(){
     
     while(in!="END"){
         std::vector<std::string> bode_results;
-
+        stop2 = std::chrono::high_resolution_clock::now();
+        
     // user input values for the reference node and output node
         int n_ref, n_out;
         std::cout << "Enter the reference node: ";
-        stop2 = std::chrono::high_resolution_clock::now();
+        
         std::cin >> n_ref;
-        resume2 = std::chrono::high_resolution_clock::now();
+        
         while(n_ref >= (n+1)){
             std::cout << "Error, invalid reference node value. Enter a valid value for the reference node: ";
-            stop3 = std::chrono::high_resolution_clock::now();
             std::cin >> n_ref;
-            resume3 = std::chrono::high_resolution_clock::now();
         }
             std::cout << "Enter the output node: ";
-        stop4 = std::chrono::high_resolution_clock::now();
         std::cin >> n_out;
-        resume4 = std::chrono::high_resolution_clock::now();
+        
         
         while((n_out >= (n+1)) || (n_out == n_ref)){
             std::cout << "Error, invalid output node value. Enter a valid value for the output node: ";
-            stop5 = std::chrono::high_resolution_clock::now();
             std::cin >> n_out;
-            resume5 = std::chrono::high_resolution_clock::now();
-            
         }
+        resume2 = std::chrono::high_resolution_clock::now();
+        
+        
     
+        pausetest = (resume2 - stop2);
+        pause+=pausetest;
+        
+        
         std::string heading;
         heading.append("Freq.   ");
         heading.append("V(n");
@@ -457,6 +459,8 @@ int main(){
     
         n_ref = n_ref - 1;
         n_out = n_out - 1;
+        
+        
 
         std::cout << "Reference Node Values are: " << std::endl;
         if(n_ref == -1){
@@ -474,10 +478,11 @@ int main(){
         for(int i = 0; i < results.size(); i++){
             std::cout << results[i][n_out] << std::endl;
         }
+         
     
     
 
-        std::cout << std::endl << "Calculation of Bode Plot Entries: " << std::endl;
+      //  std::cout << std::endl << "Calculation of Bode Plot Entries: " << std::endl;
         for(int i = 0; i < results.size(); i++){
             element a = results[i][n_ref];
             element b = results[i][n_out];
@@ -503,11 +508,7 @@ int main(){
             values.append(std::to_string(re));
             values.append(", ");
             values.append(std::to_string(im));
-        
         */
-        
-        
-
         
         float phase = get_phase(c);
             float magnitude = 20*log10(get_magnitude(c));
@@ -523,12 +524,12 @@ int main(){
         values.append("dB, ");
         values.append(std::to_string(phase));
        
-         
-
             bode_results.push_back(values);
         }
+        
+        std::cout << std::endl;
 
-    // print bode plot results (visualization purposes)
+     //print bode plot results (visualization purposes)
     for(int i = 0; i < bode_results.size(); i++){
         std::cout << bode_results[i] << std::endl;
     }
@@ -542,8 +543,6 @@ int main(){
         title.append(std::to_string(n_ref+1));
         title.append(".txt");
         
-        std::cout<<title<<std::endl;
-
     std::ofstream outfile2;
     outfile2.open(title);
 
@@ -559,14 +558,20 @@ int main(){
     outfile2.close();
         
     std::cout<<"Enter 'END' to end the program or enter anything to generate another bode plot"<<std::endl;
-        stop6 = std::chrono::high_resolution_clock::now();
+        stop3 = std::chrono::high_resolution_clock::now();
         std::cin >> in;
-        resume6 = std::chrono::high_resolution_clock::now();
+        resume3 = std::chrono::high_resolution_clock::now();
+        
+        
+        
+        pausetest = (resume3 - stop3);
+        pause+=pausetest;
     }
     
     end = std::chrono::high_resolution_clock::now();
     
-    duration= end - start -(resume1-stop1)-(resume2 - stop2)-(resume3-stop3)-(resume4 - stop4)-(resume5-stop5)-(resume6 - stop6);
+    
+    duration= end - start - pause;
     
     std::cout << "------------------------------------------------------------" << std::endl;
     std::cout << "The AC Circuit Simulation is completed." << std::endl;
