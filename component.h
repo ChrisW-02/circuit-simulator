@@ -91,11 +91,9 @@ public:
         return label_to_idx(NodeC);
     };
 
-
     virtual int getNodeD(){
         return label_to_idx(NodeD);
     };
-
 
     virtual bool AC(std::string value){
         char mode = value[0];
@@ -154,7 +152,7 @@ float get_magnitude(std::complex<float> val){
 // function to solve the phase of the phasor (theta)
 float get_phase(std::complex<float> val){
     float angle = std::arg(val); // phase angle of complex in radians
-    float theta = angle * (180.0/M_PI); // convert to radians
+    float theta = angle * (180.0/M_PI); // convert to degrees
     return theta;
 }
 
@@ -170,7 +168,7 @@ std::vector<std::string> newline(std::vector<std::string> line){
         idx1 = line[i].find(ast);
         idx2 = line[i].find(c);
         idx3 = line[i].find(endFile);
-        
+
         if(idx1 == std::string::npos && idx2 == std::string::npos && idx3 == std::string::npos){}
         else{
             line.erase(line.begin() + (i));
@@ -220,7 +218,7 @@ public:
         G = 0;
 
         if(AC(info[3])){
-            //get the value after AC
+            // get the value after AC
             I = get_AC(info[3], info[4]);
         }
         else{
@@ -312,8 +310,6 @@ public:
 // class for BJT
 class BJT: public Component{
 public:
-    //Q1 N003 N001 0 NPN
-
     std::string resistor_rbe;
     std::string resistor_r0;
     std::string Gc;
@@ -340,19 +336,19 @@ public:
 
         // details for NPN (2N2222) BJT
         if(info[4] == "NPN"){
-            
+
             Gc.append("Gc_");
             Gc.append(info[0]);
             Gc.push_back(' ');
-            Gc = Gc + (info[1]); //in
+            Gc = Gc + (info[1]); // in
             Gc.push_back(' ');
-            Gc = Gc + (info[3]); //out
+            Gc = Gc + (info[3]); // out
             Gc.push_back(' ');
-            Gc = Gc + (info[2]); //+
+            Gc = Gc + (info[2]); // +
             Gc.push_back(' ');
-            Gc = Gc + (info[3]); //-
+            Gc = Gc + (info[3]); // -
             Gc.push_back(' ');
-            
+
 
             resistor_rbe.append("5k");
             resistor_r0.append("100k");
@@ -361,17 +357,17 @@ public:
 
         // details for PNP (2N2907) BJT
         if(info[4] == "PNP"){
-            
+
             Gc.append("Gc_");
             Gc.append(info[0]);
             Gc.push_back(' ');
-            Gc = Gc + (info[3]); //in
+            Gc = Gc + (info[3]); // in
             Gc.push_back(' ');
-            Gc = Gc + (info[1]); //out
+            Gc = Gc + (info[1]); // out
             Gc.push_back(' ');
-            Gc = Gc + (info[3]); //+
+            Gc = Gc + (info[3]); // +
             Gc.push_back(' ');
-            Gc = Gc + (info[2]); //-
+            Gc = Gc + (info[2]); // -
             Gc.push_back(' ');
 
             resistor_rbe.append("6.25k");
@@ -413,7 +409,6 @@ public:
 
         // details for NMOS (BSB012N03LX3) MOSFET
         if(info[4] == "NMOS"){
-            
             // r0 = 1/(lamtha * Id) = 1/0.09 *1.2m = 9260
             Gd.append("Gd_");
             Gd.append(info[0]);
@@ -433,7 +428,7 @@ public:
 
         // details for PMOS (FDS4435A) MOSFET
         if(info[4] == "PMOS"){
-            
+
             Gd.append("Gd_");
             Gd.append(info[0]);
             Gd.push_back(' ');

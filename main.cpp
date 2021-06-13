@@ -21,7 +21,7 @@ int main(){
     std::chrono::time_point<std::chrono::steady_clock> start, end, stop1, resume1,stop2, resume2,stop3, resume3;
     std::chrono::duration<float> duration, pause, pausetest;
     start = std::chrono::high_resolution_clock::now();
-    
+
     std::cout << "------------------------------------------------------------" << std::endl;
     std::cout << "Welcome to the AC Circuit Simulation!" << std::endl;
     std::cout << "------------------------------------------------------------" << std::endl << std::endl;
@@ -39,12 +39,12 @@ int main(){
     pause = start - start;
     pausetest = (resume1 - stop1);
     pause+=pausetest;
-    
+
     std::ifstream infile;
     infile.open(filename);
 
     if(!infile.is_open()){
-        std::cout << "Error, can not open input file." << std::endl;
+        std::cout << "Error, cannot open input file." << std::endl;
         return EXIT_FAILURE;
     }
 
@@ -55,9 +55,8 @@ int main(){
             line.push_back(inputline);
         }
     }
-    
-    //------prints the netlist
 
+    // print the netlist
     for(int i = 0; i < line.size(); i++){
            std::cout << line[i] << std::endl;
     }
@@ -83,24 +82,14 @@ int main(){
 
     std::vector<netvec> results;
 
-    //std::cout << "No. of steps: " << n_steps << std::endl;
-
     for(int i = 0; i < line.size(); i++){
         line = newline(line);
     }
-    
-    //-------prints the component lines
 
-    // vector 'line' only contains component now
-    //for(int i = 0; i < line.size(); i++){
-    //       std::cout << line[i] << std::endl;
-    //}
+    // get the number of nodes in the circuit
+    int tmp = 0; // record highest node
 
-
-   // get the number of nodes in the circuit
-   int tmp = 0; // record highest node
-
-   for(int i = 0; i < line.size(); i++){
+    for(int i = 0; i < line.size(); i++){
         std::vector<std::string> info;
         info = Getinfo(line[i]);
         int a, b;
@@ -139,7 +128,6 @@ int main(){
         for(int i = 0; i < line.size(); i++){
             // determine the first letter
             char firstLetter = line[i].at(0);
-            //std::cout << "currently taking in: "<< firstLetter << std::endl;
 
             std::vector<std::string> info;
             info = Getinfo(line[i]);
@@ -236,16 +224,12 @@ int main(){
                 line.push_back(M.resistor_r0);
                 line.push_back(M.Gd);
             }
-            
-
         }
 
         // iterate again for current source(s)
         for(int i = 0; i < line.size(); i++){
 
-            // this part is repeated so it needs to be simplified
             char firstLetter = line[i].at(0);
-            //std::cout << "currently taking in: " << firstLetter << std::endl;
 
             std::vector<std::string> info;
             info = Getinfo(line[i]);
@@ -279,13 +263,13 @@ int main(){
                 int l = G1.getNodeD()-1; // control -
 
 
-                //for none ground nodes
-                //for a, b, c, d nodes
-                //A(a,c)+=G
-                //A(a,d)-=G
-                //A(b,c)-=G
-                //A(b,d)+=G
-                if(i!= -1){              //not=-1 means not ground
+                // for none ground nodes
+                // for a, b, c, d nodes
+                // A(a,c)+=G
+                // A(a,d)-=G
+                // A(b,c)-=G
+                // A(b,d)+=G
+                if(i!= -1){              // -1 means ground
                     if(k!=-1){
                         A_mat(i,k) +=G1.G;
                           }
@@ -307,9 +291,8 @@ int main(){
 
         // iterate again for voltage source(s)
         for(int i = 0; i < line.size(); i++){
-            // repeated again
+
             char firstLetter = line[i].at(0);
-            //std::cout << "currently taking in: "<< firstLetter << std::endl;
 
             std::vector<std::string> info;
             info = Getinfo(line[i]);
@@ -324,7 +307,7 @@ int main(){
                     b_vec(j,0) = V1.V;
 
                     for(int k = 0; k < n; k++){
-                        //changing row j to represent vj = -vsrc
+                        // changing row j to represent vj = -vsrc
                         A_mat(j,k) = 0;
                     }
 
@@ -335,7 +318,7 @@ int main(){
                     b_vec(i,0) = V1.V;
 
                     for(int k = 0; k < n; k++){
-                        //changing row i to represent vi = vsrc
+                        // changing row i to represent vi = vsrc
                         A_mat(i,k) = 0;
                     }
 
@@ -345,13 +328,13 @@ int main(){
                 else{
                     i--;
                     j--;
-                    b_vec(j,0) += b_vec(i,0); //i_supernode
-                    b_vec(i,0) = V1.V; //v_src
+                    b_vec(j,0) += b_vec(i,0); // i_supernode
+                    b_vec(i,0) = V1.V; // v_src
                     A_mat(j,j) += A_mat(i,i);
 
 
                     for(int k = 0; k < n; k++){
-                        //changing row i to represent vi = vj + vsrc
+                        // changing row i to represent vi = vj + vsrc
                         A_mat(i,k) = 0;
                     }
 
@@ -363,7 +346,7 @@ int main(){
 
         std::cout << "----------------------------------------" << std::endl;
 
-         //print the A matrix and b vector (visualization purposes)
+        // print the A matrix and b vector (visualization purposes)
         std::cout << std::endl << "the A matrix " << std::endl;
         std::cout << A_mat << std::endl;
 
@@ -375,15 +358,12 @@ int main(){
         std::cout << std::endl << "the inverse A matrix" << std::endl;
         std::cout << A_inv << std::endl;
 
-        //std::cout << std::endl << "test the inverse matrix (should produce identity matrix)" << std::endl;
-        //std::cout << A_mat * A_inv << std::endl;
-
         std::cout << std::endl << "the x vector (solution)" << std::endl;
         x_vec = A_inv * b_vec;
         std::cout << x_vec << std::endl;
 
         std::cout << std::endl;
-        
+
         std::cout << "----------------------------------------" << std::endl;
 
         // store values of x vector (matrix) into results vector to save to a file
@@ -392,11 +372,8 @@ int main(){
         for(int i = 0; i < n; i++){
             voltage_at_nodes.push_back(x_vec(i,0));
         }
-
         results.push_back(voltage_at_nodes);
     }
-    
-    
 
     std::ofstream outfile;
     outfile.open("voltage.txt");
@@ -414,40 +391,38 @@ int main(){
     }
 
     outfile.close();
-    
+
     std::string in;
-    std::cout<<"Generating Transfer Function"<<std::endl;
-    
+    std::cout << "Generating Transfer Function" << std::endl;
+
     while(in!="END"){
         std::vector<std::string> bode_results;
         stop2 = std::chrono::high_resolution_clock::now();
-        
-    // user input values for the reference node and output node
+
+        // user input values for the reference node and output node
         int n_ref, n_out;
         std::cout << "Enter the reference node: ";
-        
         std::cin >> n_ref;
-        
+
         while(n_ref >= (n+1)){
             std::cout << "Error, invalid reference node value. Enter a valid value for the reference node: ";
             std::cin >> n_ref;
         }
-            std::cout << "Enter the output node: ";
+
+        std::cout << "Enter the output node: ";
         std::cin >> n_out;
-        
-        
+
+
         while((n_out >= (n+1)) || (n_out == n_ref)){
             std::cout << "Error, invalid output node value. Enter a valid value for the output node: ";
             std::cin >> n_out;
         }
+
         resume2 = std::chrono::high_resolution_clock::now();
-        
-        
-    
+
         pausetest = (resume2 - stop2);
-        pause+=pausetest;
-        
-        
+        pause += pausetest;
+
         std::string heading;
         heading.append("Freq.   ");
         heading.append("V(n");
@@ -456,11 +431,9 @@ int main(){
         heading.append(std::to_string(n_ref));
         heading.append(")");
         bode_results.push_back(heading);
-    
+
         n_ref = n_ref - 1;
         n_out = n_out - 1;
-        
-        
 
         std::cout << "Reference Node Values are: " << std::endl;
         if(n_ref == -1){
@@ -478,11 +451,8 @@ int main(){
         for(int i = 0; i < results.size(); i++){
             std::cout << results[i][n_out] << std::endl;
         }
-         
-    
-    
 
-      //  std::cout << std::endl << "Calculation of Bode Plot Entries: " << std::endl;
+        //  calculating bode plot entries
         for(int i = 0; i < results.size(); i++){
             element a = results[i][n_ref];
             element b = results[i][n_out];
@@ -495,84 +465,66 @@ int main(){
             else{
                 c = b / a; // transfer function = output node / reference node
             }
-        
-        //-----------debug using cartesian form
-        
-        /*
-            float re = c.real();
-            float im = c.imag();
-            float f_n = (string_to_float(info2[3])) * pow(10, i/(string_to_float(info2[2])));
-            std::string values;
-            values.append(std::to_string(f_n));
-            values.append("    ");
-            values.append(std::to_string(re));
-            values.append(", ");
-            values.append(std::to_string(im));
-        */
-        
-        float phase = get_phase(c);
+
+            float phase = get_phase(c);
             float magnitude = 20*log10(get_magnitude(c));
 
-        float f_n = (string_to_float(info2[3])) * pow(10, i/(string_to_float(info2[2])));
-        //float w = 2* M_PI * f_n;
+            float f_n = (string_to_float(info2[3])) * pow(10, i/(string_to_float(info2[2])));
 
-        // store bode plot results into bode_results in CSV format
-        std::string values;
-        values.append(std::to_string(f_n));
-        values.append(", ");
-        values.append(std::to_string(magnitude));
-        values.append("dB, ");
-        values.append(std::to_string(phase));
-       
+            // store bode plot results into bode_results in CSV format
+            std::string values;
+            values.append(std::to_string(f_n));
+            values.append(", ");
+            values.append(std::to_string(magnitude));
+            values.append("dB, ");
+            values.append(std::to_string(phase));
+
             bode_results.push_back(values);
         }
-        
+
         std::cout << std::endl;
 
-     //print bode plot results (visualization purposes)
-    for(int i = 0; i < bode_results.size(); i++){
-        std::cout << bode_results[i] << std::endl;
-    }
-    std::cout << std::endl;
-        
-    std::string title;
+        // print bode plot results (visualization purposes)
+        for(int i = 0; i < bode_results.size(); i++){
+            std::cout << bode_results[i] << std::endl;
+        }
+        std::cout << std::endl;
+
+        std::string title;
         title.append("bode_plot_");
         title.append("n");
         title.append(std::to_string(n_out+1));
         title.append("onn");
         title.append(std::to_string(n_ref+1));
         title.append(".txt");
-        
-    std::ofstream outfile2;
-    outfile2.open(title);
 
-    if(!outfile2.is_open()){
-        std::cout << "error opening file" << std::endl;
-        return EXIT_FAILURE;
-    }
+        std::ofstream outfile2;
+        outfile2.open(title);
 
-    for(int i = 0; i < bode_results.size(); i++){
-        outfile2 << bode_results[i] << std::endl;
-    }
+        if(!outfile2.is_open()){
+            std::cout << "error opening file" << std::endl;
+            return EXIT_FAILURE;
+        }
 
-    outfile2.close();
-        
-    std::cout<<"Enter 'END' to end the program or enter anything to generate another bode plot"<<std::endl;
+        for(int i = 0; i < bode_results.size(); i++){
+            outfile2 << bode_results[i] << std::endl;
+        }
+
+        outfile2.close();
+
+        std::cout << "Enter 'END' to end the program or enter anything to generate another bode plot" << std::endl;
         stop3 = std::chrono::high_resolution_clock::now();
         std::cin >> in;
         resume3 = std::chrono::high_resolution_clock::now();
-        
-        
-        
+
         pausetest = (resume3 - stop3);
-        pause+=pausetest;
+        pause += pausetest;
     }
-    
+
     end = std::chrono::high_resolution_clock::now();
-    
-    
+
     duration= end - start - pause;
-    
+
     std::cout << "------------------------------------------------------------" << std::endl;
     std::cout << "The AC Circuit Simulation is completed." << std::endl;
     std::cout << "The execution time is "<< duration.count() <<"s"<< std::endl;
