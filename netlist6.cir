@@ -1,6 +1,0 @@
-* A low pass filter circuit
-V1 N001 0 AC(3 30)
-R1 N001 N002 1k
-C1 N002 0 1μ
-.op
-.end
