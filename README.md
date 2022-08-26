@@ -1,4 +1,4 @@
-# programming-project
+# circuit-simulator
 
 This project contains all the information regarding out first year EE project.
 
